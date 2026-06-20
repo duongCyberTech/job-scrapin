@@ -11,3 +11,147 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  CANDIDATE
+  ADMIN
+  TECHNICIAN
+}
+
+model User {
+  uid        String   @id @default(uuid())
+  username   String   @unique
+  email      String   @unique
+  first_name String
+  mid_name   String?
+  last_name  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role       Role     @default(CANDIDATE)
+  password   String
+  phone_number String?
+  avatar_url String?
+
+  profiles Profile[]
+
+  reviews Review[]
+}
+
+model Profile {
+  profile_id  String   @id @default(uuid())
+  title       String
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  skill_set   Json    @db.JsonB
+  language_set Json    @db.JsonB
+  work_exp    Json    @db.JsonB
+  education   Json    @db.JsonB
+  linked_in_url String?
+  github_url    String?
+  user_id     String
+
+  user        User     @relation(fields: [user_id], references: [uid])
+
+  reviews Review[]
+
+  aiJobMatchings AiJobMatching[]
+}
+
+enum ResourceType {
+  RESUME
+  COVER_LETTER
+  CERTIFICATE
+  OTHER
+}
+
+model Resource {
+  resource_id String   @id @default(uuid())
+  title       String
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  file_url    String
+  type        ResourceType
+}
+
+enum ReviewType {
+  TECHNICIAN_REVIEW
+  PEER_REVIEW
+}
+
+model Review {
+  review_id   String   @id @default(uuid())
+  title       String
+  rating      Int
+  content     String?
+  type        ReviewType @default(PEER_REVIEW)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  user_id     String
+  profile_id  String
+
+  user        User     @relation(fields: [user_id], references: [uid])
+  profile     Profile  @relation(fields: [profile_id], references: [profile_id])
+}
+
+enum WorkType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+}
+
+enum WorkLocation {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+model Job {
+  job_id     String   @id @default(uuid())
+  title      String
+  description String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  work_type  WorkType
+  work_location WorkLocation
+  district   String
+  city       String
+  country    String
+  linked_in_url String?
+  company_id String
+
+  company    Company  @relation(fields: [company_id], references: [company_id])
+  aiJobMatchings AiJobMatching[]
+}
+
+model AiJobMatching {
+  id         String   @id @default(uuid())
+  job_id     String
+  profile_id String
+  score      Float
+  ai_result  Json     @db.JsonB
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  job        Job      @relation(fields: [job_id], references: [job_id])
+  profile    Profile  @relation(fields: [profile_id], references: [profile_id])
+}
+
+model Company {
+  company_id String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  phone_number String?
+  description String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  website_url String?
+  linked_in_url String?
+  other_url String[]
+  industry    String?
+
+  jobs Job[]
+}
