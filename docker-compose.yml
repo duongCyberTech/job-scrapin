@@ -30,14 +30,14 @@ services:
     container_name: main-service
     volumes:
       - ./main-service:/usr/src/app
-    command: sh -c "npx prisma migrate deploy && npm run start:docker:dev"
+      - /usr/src/app/node_modules
+    command: npx nest start --watch --preserveWatchOutput
     restart: always
     ports:
       - 4000:4000
     depends_on:
       postgres:
         condition: service_healthy
-
 
 volumes:
   postgres-data:
