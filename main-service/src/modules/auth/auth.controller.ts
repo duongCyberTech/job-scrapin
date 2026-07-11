@@ -3,6 +3,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,5 +16,10 @@ export class AuthController {
       throw new UnauthorizedException('Invalid credentials');
     }
     return this.authService.login(validatedUser);
+  }
+
+  @Post('register')
+  async register(@Body('data') data: CreateUserDto) {
+    return this.authService.register(data);
   }
 }

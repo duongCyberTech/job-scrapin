@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Role } from "@prisma/client/edge";
-import { IsEmail, IsString, Matches } from "class-validator";
+import { Role } from "@prisma/client";
+import { IsEmail, IsEnum, IsOptional, IsString, Matches, MinLength } from "class-validator";
 
 export class CreateUserDto {
   @ApiProperty()
@@ -8,9 +8,20 @@ export class CreateUserDto {
   email!: string;
 
   @ApiProperty()
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-    message: 'Password must be at least 8 characters long and contain at least one letter and one number',
+  @IsString()
+  @MinLength(8, { message: 'Password phải có ít nhất 8 ký tự' })
+  @Matches(/^(?=.*[a-z])/, {
+    message: 'Password phải chứa ít nhất 1 chữ thường',
   })
+  @Matches(/^(?=.*[A-Z])/, {
+    message: 'Password phải chứa ít nhất 1 chữ hoa',
+  })
+  @Matches(/^(?=.*\d)/, {
+    message: 'Password phải chứa ít nhất 1 số',
+  })
+  @Matches(/^(?=.*[@$!%*?&])/,
+    { message: 'Password phải chứa ít nhất 1 ký tự đặc biệt (@$!%*?&)' },
+  )
   password!: string;
 
   @ApiProperty()
@@ -20,11 +31,31 @@ export class CreateUserDto {
   @ApiProperty()
   @IsString()
   @Matches(/^[\p{L}\s]+$/u, {
-      message: 'Tên không hợp lệ',
+    message: 'Tên không hợp lệ',
   })
   firstName!: string;
+
+  @ApiProperty()
+  @IsString()
+  @Matches(/^[\p{L}\s]+$/u, {
+    message: 'Tên không hợp lệ',
+  })
   middleName?: string;
+
+  @ApiProperty()
+  @IsString()
+  @Matches(/^[\p{L}\s]+$/u, {
+    message: 'Tên không hợp lệ',
+  })
   lastName!: string;
+
+  @ApiProperty({ enum: Role })
+  @IsEnum(Role)
   role!: Role;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @Matches(/^(0|\+84)(3|5|7|8|9)+([0-9]{8})\b/, { message: 'Số điện thoại không hợp lệ' })
   phoneNumber?: string;
 }
