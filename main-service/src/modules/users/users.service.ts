@@ -11,7 +11,9 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.prisma.user.create({
+      data: createUserDto
+    })
   }
 
   findAll() {

@@ -33,21 +33,21 @@ export class CreateUserDto {
   @Matches(/^[\p{L}\s]+$/u, {
     message: 'Tên không hợp lệ',
   })
-  firstName!: string;
+  first_name!: string;
 
   @ApiProperty()
   @IsString()
   @Matches(/^[\p{L}\s]+$/u, {
     message: 'Tên không hợp lệ',
   })
-  middleName?: string;
+  mid_name?: string;
 
   @ApiProperty()
   @IsString()
   @Matches(/^[\p{L}\s]+$/u, {
     message: 'Tên không hợp lệ',
   })
-  lastName!: string;
+  last_name!: string;
 
   @ApiProperty({ enum: Role })
   @IsEnum(Role)
@@ -57,5 +57,5 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   @Matches(/^(0|\+84)(3|5|7|8|9)+([0-9]{8})\b/, { message: 'Số điện thoại không hợp lệ' })
-  phoneNumber?: string;
+  phone_number?: string;
 }
