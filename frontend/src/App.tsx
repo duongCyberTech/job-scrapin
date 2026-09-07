@@ -1,5 +1,7 @@
 import { createBrowserRouter, RouterProvider, Outlet, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import Register from './pages/auth/Register';
+import Login from './pages/auth/Login';
 
 function RootLayout() {
   return (
@@ -7,6 +9,8 @@ function RootLayout() {
       <nav style={{ display: 'flex', gap: '1rem', padding: '1rem' }}>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
+        <Link to="/register">Register</Link>
+        <Link to="/login">Login</Link>
       </nav>
       <hr />
       <main style={{ padding: '1rem' }}>
@@ -22,6 +26,8 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <Dashboard /> },
+      { path: 'register', element: <Register /> },
+      { path: 'login', element: <Login /> }
     ],
   },
 ]);

@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Role } from "@prisma/client";
 import { IsEmail, IsEnum, IsOptional, IsString, Matches, MinLength } from "class-validator";
+import { SanitizeEmpty } from "src/common/validators/sanitize-empty.validator";
 
 export class CreateUserDto {
   @ApiProperty()
@@ -40,6 +41,8 @@ export class CreateUserDto {
   @Matches(/^[\p{L}\s]+$/u, {
     message: 'Tên không hợp lệ',
   })
+  @SanitizeEmpty()
+  @IsOptional()
   mid_name?: string;
 
   @ApiProperty()
@@ -56,6 +59,7 @@ export class CreateUserDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
+  @SanitizeEmpty()
   @Matches(/^(0|\+84)(3|5|7|8|9)+([0-9]{8})\b/, { message: 'Số điện thoại không hợp lệ' })
   phone_number?: string;
 }

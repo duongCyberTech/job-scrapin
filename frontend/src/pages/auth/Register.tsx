@@ -1,38 +1,41 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import PasswordStrengthMeter from '../../components/PasswordStrengthMeter';
 import PasswordRequirements from '../../components/PasswordRequirements';
+import { registerUser } from '../../services/authService';
 
 interface FormState {
-  firstName: string;
-  middleName: string;
-  lastName: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  confirm_password: string;
+  phone_number: string;
 }
 
 interface FormErrors {
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
   username?: string;
   email?: string;
   password?: string;
-  confirmPassword?: string;
+  confirm_password?: string;
+  phone_number?: string;
 }
 
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormState>({
-    firstName: '',
-    middleName: '',
-    lastName: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    confirm_password: '',
+    phone_number: ''
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -43,12 +46,12 @@ export default function Register() {
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required.';
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = 'First name is required.';
     }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required.';
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = 'Last name is required.';
     }
 
     if (!formData.username.trim()) {
@@ -71,10 +74,10 @@ export default function Register() {
       newErrors.password = 'Password must be at least 8 characters.';
     }
 
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Confirm your password.';
-    } else if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = 'Passwords do not match.';
+    if (!formData.confirm_password) {
+      newErrors.confirm_password = 'Confirm your password.';
+    } else if (formData.confirm_password !== formData.password) {
+      newErrors.confirm_password = 'Passwords do not match.';
     }
 
     setErrors(newErrors);
@@ -97,9 +100,11 @@ export default function Register() {
 
     setIsSubmitting(true);
     try {
-      // Replace with your actual backend registration endpoint:
-      // await axios.post('/api/auth/register', formData);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { confirm_password, middle_name, ...registrationData } = formData;
+      await registerUser({
+        ...registrationData,
+        middle_name,
+      });
 
       navigate('/login');
     } catch {
@@ -134,18 +139,18 @@ export default function Register() {
               </label>
               <input
                 id="firstName"
-                name="firstName"
+                name="first_name"
                 type="text"
                 placeholder="John"
-                value={formData.firstName}
+                value={formData.first_name}
                 onChange={handleChange}
                 className={`w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition ${
-                  errors.firstName
+                  errors.first_name
                     ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
                     : 'border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600'
                 }`}
               />
-              {errors.firstName && <p className="mt-1 text-xs text-rose-500">{errors.firstName}</p>}
+              {errors.first_name && <p className="mt-1 text-xs text-rose-500">{errors.first_name}</p>}
             </div>
 
             <div>
@@ -154,10 +159,10 @@ export default function Register() {
               </label>
               <input
                 id="middleName"
-                name="middleName"
+                name="middle_name"
                 type="text"
                 placeholder="Robert"
-                value={formData.middleName}
+                value={formData.middle_name}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
               />
@@ -169,18 +174,18 @@ export default function Register() {
               </label>
               <input
                 id="lastName"
-                name="lastName"
+                name="last_name"
                 type="text"
                 placeholder="Doe"
-                value={formData.lastName}
+                value={formData.last_name}
                 onChange={handleChange}
                 className={`w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition ${
-                  errors.lastName
+                  errors.last_name
                     ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
                     : 'border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600'
                 }`}
               />
-              {errors.lastName && <p className="mt-1 text-xs text-rose-500">{errors.lastName}</p>}
+              {errors.last_name && <p className="mt-1 text-xs text-rose-500">{errors.last_name}</p>}
             </div>
           </div>
 
@@ -269,13 +274,13 @@ export default function Register() {
               <div className="relative">
                 <input
                   id="confirmPassword"
-                  name="confirmPassword"
+                  name="confirm_password"
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Repeat your password"
-                  value={formData.confirmPassword}
+                  value={formData.confirm_password}
                   onChange={handleChange}
                   className={`w-full rounded-lg border pr-12 pl-3.5 py-2.5 text-sm outline-none transition ${
-                    errors.confirmPassword
+                    errors.confirm_password
                       ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
                       : 'border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600'
                   }`}
@@ -288,8 +293,8 @@ export default function Register() {
                   {showConfirmPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-              {errors.confirmPassword && (
-                <p className="mt-1 text-xs text-rose-500">{errors.confirmPassword}</p>
+              {errors.confirm_password && (
+                <p className="mt-1 text-xs text-rose-500">{errors.confirm_password}</p>
               )}
             </div>
           </div>
