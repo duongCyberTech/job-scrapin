@@ -4,3 +4,4 @@ build/
 .env
 postgres-data/
 generated/
+/design
